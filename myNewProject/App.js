@@ -1,41 +1,25 @@
-import React, { useState } from "react";
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
-import RegistrationScreen from "./components/RegistrationScreen";
-import { AppLoading } from "expo";
+import {
+  useFonts,
+  Roboto_400Regular,
+  Roboto_500Medium,
+} from "@expo-google-fonts/roboto";
+import AppLoading from "expo-app-loading";
 import LoginScreen from "./components/LoginScreen";
-
-// const loadFonts = async () => {
-//   await Font.loadAsync({
-//     "Roboto-Regular": require("./assets/Fonts/Roboto/Roboto-Regular.ttf"),
-//     "Roboto-Medium": require("./assets/Fonts/Roboto/Roboto-Medium.ttf"),
-//   });
-// };
+import RegistrationScreen from "./components/RegistrationScreen";
 
 export default function App() {
-  // console.log(Platform.OS);
-  // const [iasReady, setIasReady] = useState(false);
-  // if (!iasReady) {
-  //   return (
-  //     <AppLoading
-  //       startAsync={loadFonts}
-  //       onFinish={() => setIasReady(true)}
-  //       onError={console.warn}
-  //     />
-  //   );
-  // }
+  let [fontsLoaded] = useFonts({
+    Roboto_400Regular,
+    Roboto_500Medium,
+  });
+
+  if (!fontsLoaded) {
+    return <AppLoading />;
+  }
+
   return (
     <>
-      <LoginScreen />
+      <RegistrationScreen />
     </>
   );
 }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: "#fff",
-//     alignItems: "center",
-//     justifyContent: "center",
-//   },
-// });

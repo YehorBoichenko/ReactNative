@@ -10,6 +10,7 @@ import {
   KeyboardAvoidingView,
   Keyboard,
   TouchableWithoutFeedback,
+  Pressable,
 } from "react-native";
 
 const initialState = {
@@ -21,119 +22,105 @@ const bgImage = require("../assets/Photo-BG.jpg");
 
 export default function LoginScreen() {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
-  const [state, setstate] = useState(initialState);
-  const [borderInput, setBorderInput] = useState(null);
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [focusedPassword, setFocusedPassword] = useState(false);
+  const [focusedEmail, setFocusedEmail] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [isReady, setIsReady] = useState(false);
 
+  const handlePassword = (text) => setPassword(text);
+  const handleEmail = (text) => setEmail(text);
   const keyboardHide = () => {
     setIsShowKeyboard(false);
     Keyboard.dismiss();
-    setBorderInput(null);
   };
 
-  const handleSubmit = () => {
-    console.log("state", state);
-    setstate(initialState);
-    setShowPassword(false);
-  };
-
-  const keyboardSubmit = () => {
-    console.log("state", state);
-    setstate(initialState);
+  const submitKeyboard = () => {
+    setPassword("");
+    setEmail("");
     keyboardHide();
     setShowPassword(false);
   };
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
-      <View style={styles.container}>
-        <ImageBackground
-          style={{ ...styles.image, marginBottom: isShowKeyboard ? -250 : 0 }}
-          source={bgImage}
-        >
-          <View
-            style={{
-              ...styles.form,
-              marginBottom: isShowKeyboard ? 250 : 0,
-            }}
-            onSubmitEditing={keyboardSubmit}
-          >
-            {/* <KeyboardAvoidingView
-              behavior={Platform.OS == "ios" ? "padding" : "height"}
-            > */}
-            <View style={styles.header}>
-              <Text style={styles.headerTitle}>Войти</Text>
-            </View>
-            <View>
+      <ImageBackground
+        style={{ ...styles.bgimage, marginBottom: isShowKeyboard ? -250 : 0 }}
+        source={bgImage}
+        resizeMode="cover"
+      >
+        <View style={styles.container}>
+          <TouchableWithoutFeedback onPress={keyboardHide}>
+            <View
+              style={{
+                ...styles.containerForRegistration,
+                flex: isShowKeyboard ? 0.5 : 0.56,
+                marginBottom: isShowKeyboard ? 250 : 0,
+              }}
+              onSubmitEditing={submitKeyboard}
+            >
+              <View style={styles.containerForInput}>
+                <Text style={styles.text}>Войти</Text>
+              </View>
               <TextInput
-                style={{
-                  ...styles.input,
-                  borderColor:
-                    borderInput === "Адреса електронної пошти"
-                      ? "#FF6C00"
-                      : "#E8E8E8",
-                }}
-                placeholder={"Адрес электронной почты"}
-                secureTextEntry={true}
+                value={email}
+                onChangeText={handleEmail}
+                placeholder="Адрес электронной почты"
                 placeholderTextColor={"#BDBDBD"}
                 keyboardType={"email-address"}
-                value={state.email}
+                style={focusedEmail ? styles.inputFocused : styles.input}
                 onFocus={() => {
+                  setFocusedEmail(true);
                   setIsShowKeyboard(true);
-                  setBorderInput("Адреса електронної пошти");
                 }}
-                onChangeText={(value) =>
-                  setstate((prevState) => ({ ...prevState, email: value }))
-                }
+                onBlur={() => {
+                  setFocusedEmail(false);
+                }}
               />
-            </View>
-            <View style={styles.passwordInput}>
-              <TextInput
-                placeholder={"Пароль"}
-                placeholderTextColor={"#BDBDBD"}
-                secureTextEntry={!showPassword}
-                style={{
-                  ...styles.input,
-                  borderColor: borderInput === "Пароль" ? "#FF6C00" : "#E8E8E8",
-                }}
-                onFocus={() => {
-                  setIsShowKeyboard(true);
-                  setBorderInput("Пароль");
-                }}
-                value={state.password}
-                onChangeText={(value) =>
-                  setstate((prevState) => ({ ...prevState, password: value }))
-                }
-              />
-              {state.password && (
-                <Text
-                  style={styles.passwordBtn}
-                  onPress={() => {
-                    setShowPassword(!showPassword);
+              <View style={styles.passwordInput}>
+                <TextInput
+                  value={password}
+                  onChangeText={handlePassword}
+                  placeholder="Пароль"
+                  placeholderTextColor={"#BDBDBD"}
+                  secureTextEntry={showPassword}
+                  style={focusedPassword ? styles.inputFocused : styles.input}
+                  onFocus={() => {
+                    setFocusedPassword(true);
+                    setIsShowKeyboard(true);
                   }}
-                >
-                  {showPassword ? "Спрятать" : "Показать"}
-                </Text>
+                  onBlur={() => {
+                    setFocusedPassword(false);
+                  }}
+                />
+                {password && (
+                  <Text
+                    style={styles.passwordBtn}
+                    onPress={() => {
+                      setShowPassword(!showPassword);
+                    }}
+                  >
+                    {showPassword ? "Показать" : "Спрятать"}
+                  </Text>
+                )}
+              </View>
+              {!isShowKeyboard && (
+                <TouchableOpacity activeOpacity={0.8} style={styles.LogBTN}>
+                  <Text style={styles.LogText}>Вход</Text>
+                </TouchableOpacity>
               )}
-            </View>
-            <View>
-              <TouchableOpacity
-                activeOpacity={0.8}
-                style={styles.btn}
-                onPress={handleSubmit}
-              >
-                <Text style={styles.btnTitle}>Войти</Text>
-              </TouchableOpacity>
-              <View>
-                <Text style={styles.underBtnText}>
-                  Нет аккаунта? Зарегестрироваться
-                </Text>
+              <View style={styles.containerForInput}>
+                {!isShowKeyboard && (
+                  <Pressable style={styles.loginBtn}>
+                    <Text style={styles.loginText}>
+                      Нет акаунта? Зарегистрироваться
+                    </Text>
+                  </Pressable>
+                )}
               </View>
             </View>
-            {/* </KeyboardAvoidingView> */}
-          </View>
-        </ImageBackground>
-      </View>
+          </TouchableWithoutFeedback>
+        </View>
+      </ImageBackground>
     </TouchableWithoutFeedback>
   );
 }
@@ -141,75 +128,79 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f0f",
-  },
-  image: {
-    flex: 1,
-    // resizeMode: "cover",
+    justifyContent: "center",
     justifyContent: "flex-end",
   },
+  containerForInput: {
+    alignItems: "center",
+  },
   input: {
+    backgroundColor: "#F6F6F6",
     borderWidth: 1,
     borderColor: "#E8E8E8",
     borderRadius: 8,
-    backgroundColor: "#F6F6F6",
-    color: "#f0f8ff",
-    marginHorizontal: 16,
     padding: 16,
-    fontSize: 16,
-    lineHeight: 19,
-    textAlign: "left",
-    color: "#212121",
+    marginHorizontal: 16,
+    marginBottom: 16,
   },
-  form: {
-    justifyContent: "flex-end",
-    backgroundColor: "#fff",
-    borderTopRightRadius: 25,
+  inputFocused: {
+    backgroundColor: "#F6F6F6",
+    borderWidth: 1,
+    borderColor: "#FF6C00",
+    borderRadius: 8,
+    padding: 16,
+    marginHorizontal: 16,
+    marginBottom: 16,
+  },
+  bgimage: {
+    flex: 1,
+  },
+  containerForRegistration: {
+    flexDirection: "column",
+    backgroundColor: "#FFFFFF",
     borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+    justifyContent: "flex-end",
   },
-  passwordInput: {
-    position: "relative",
-    marginTop: 20,
-    marginBottom: 32,
+  LogBTN: {
+    backgroundColor: "#FF6C00",
+    marginHorizontal: 16,
+    paddingBottom: 16,
+    paddingTop: 16,
+    paddingLeft: 32,
+    paddingRight: 32,
+    alignItems: "center",
+    borderRadius: 100,
+    marginTop: 45,
+  },
+  LogText: {
+    fontSize: 16,
+    fontFamily: "Roboto_400Regular",
+    color: "#FFFFFF",
+  },
+  text: {
+    fontSize: 30,
+    marginBottom: 33,
+    marginTop: 30,
+    fontFamily: "Roboto_500Medium",
+  },
+  loginBtn: {
+    marginTop: 16,
+    marginBottom: 40,
+  },
+  loginText: {
+    fontFamily: "Roboto_400Regular",
+    fontSize: 16,
+    color: "#1B4371",
   },
   passwordBtn: {
     position: "absolute",
-    top: "35%",
+    top: "30%",
     right: 35,
     fontSize: 16,
     lineHeight: 19,
+    fontFamily: "Roboto_400Regular",
+    color: "#1B4371",
   },
-  btn: {
-    marginTop: 11,
-    borderRadius: 100,
-    backgroundColor: "#FF6C00",
-    justifyContent: "center",
-    alignItems: "center",
-    marginHorizontal: 16,
-    padding: 16,
-    fontSize: 16,
-    lineHeight: 19,
-  },
-  btnTitle: {
-    color: "#f0f8ff",
-    fontSize: 18,
-  },
-  header: {
-    alignItems: "center",
-    marginBottom: 33,
-    marginTop: 32,
-  },
-  headerTitle: {
-    // fontFamily: "Roboto-BoldItalic",
-    fontSize: 30,
-    lineHeight: 35,
-    color: "#212121",
-  },
-  underBtnText: {
-    fontSize: 16,
-    lineHeight: 19,
-    textAlign: "center",
-    marginTop: 16,
-    marginBottom: 144,
-  },
+  passwordInput: { position: "relative" },
 });
