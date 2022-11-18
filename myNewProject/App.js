@@ -4,7 +4,7 @@ import {
   Roboto_500Medium,
 } from "@expo-google-fonts/roboto";
 import AppLoading from "expo-app-loading";
-import LoginScreen from "./components/LoginScreen";
+// import LoginScreen from "./components/LoginScreen";
 import RegistrationScreen from "./components/RegistrationScreen";
 
 export default function App() {
@@ -19,6 +19,7 @@ export default function App() {
 
   return (
     <>
+      {/* <LoginScreen/> */}
       <RegistrationScreen />
     </>
   );

@@ -229,6 +229,7 @@ const styles = StyleSheet.create({
   signInText: {
     fontSize: 16,
     color: "#1B4371",
+    textAlign: "center",
     fontFamily: "Roboto_400Regular",
   },
   passwordBtn: {
