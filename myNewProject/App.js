@@ -14,7 +14,7 @@ export default function App() {
     Roboto_400Regular,
     Roboto_500Medium,
   });
-  const routing = useRoute(false);
+  const routing = useRoute(true);
 
   if (!fontsLoaded) {
     return <AppLoading />;

@@ -65,7 +65,7 @@ export const useRoute = (isAuth) => {
         name="Posts"
         component={PostsScreen}
         options={{
-          title: "Публікації",
+          title: "Публикации",
 
           headerRight: () => (
             <TouchableOpacity style={{ marginRight: 16 }}>
