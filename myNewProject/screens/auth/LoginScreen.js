@@ -1,49 +1,33 @@
 import React, { useState } from "react";
 import {
-  ImageBackground,
-  KeyboardAvoidingView,
   StyleSheet,
-  Keyboard,
-  TextInput,
-  TouchableWithoutFeedback,
-  View,
-  Platform,
-  Image,
-  Button,
   Text,
-  Pressable,
+  View,
+  ImageBackground,
+  TextInput,
   TouchableOpacity,
+  Keyboard,
+  TouchableWithoutFeedback,
+  Pressable,
 } from "react-native";
-// const loadFonts = async () => {
-//   await Font.loadAsync({
-//     "Roboto-Regular": require("./assets/Fonts/Roboto/Roboto-Regular.ttf"),
-//     "Roboto-Medium": require("./assets/Fonts/Roboto/Roboto-Medium.ttf"),
-//   });
-// };
 
 // const initialState = {
 //   email: "",
 //   password: "",
 // };
 
-const bgImage = require("../assets/Photo-BG.jpg");
-const avatarPic = require("../assets/Rectangle 22.png");
-const add = require("../assets/add.png");
+const bgImage = require("../../assets/Photo-BG.jpg");
 
-export default function RegistrationScreen() {
-  const [name, setName] = useState("");
+export default function LoginScreen({ navigation }) {
+  const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
-  const [focusedUser, setFocusedUser] = useState(false);
   const [focusedPassword, setFocusedPassword] = useState(false);
   const [focusedEmail, setFocusedEmail] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [isShowKeyboard, setIsShowKeyboard] = useState(false);
 
-  const handleName = (text) => setName(text);
   const handlePassword = (text) => setPassword(text);
   const handleEmail = (text) => setEmail(text);
-
   const keyboardHide = () => {
     setIsShowKeyboard(false);
     Keyboard.dismiss();
@@ -52,11 +36,13 @@ export default function RegistrationScreen() {
   const submitKeyboard = () => {
     setPassword("");
     setEmail("");
-    setName("");
     keyboardHide();
     setShowPassword(false);
+    navigation.navigate("Posts", {
+      screen: "PostsScreen",
+      params: state,
+    });
   };
-
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <ImageBackground
@@ -68,33 +54,15 @@ export default function RegistrationScreen() {
           <TouchableWithoutFeedback onPress={keyboardHide}>
             <View
               style={{
-                ...styles.registrationContainer,
-                flex: isShowKeyboard ? 0.8 : 0.73,
+                ...styles.containerForRegistration,
+                flex: isShowKeyboard ? 0.5 : 0.56,
                 marginBottom: isShowKeyboard ? 250 : 0,
               }}
               onSubmitEditing={submitKeyboard}
             >
-              <View style={styles.avatarWrapper}>
-                <View style={styles.avatar}>
-                  <Image style={styles.avatarBtn} source={add} />
-                </View>
+              <View style={styles.containerForInput}>
+                <Text style={styles.text}>Войти</Text>
               </View>
-              <View style={styles.inputContainer}>
-                <Text style={styles.text}>Регистрация</Text>
-              </View>
-              <TextInput
-                value={name}
-                onChangeText={handleName}
-                placeholder="Логин"
-                style={focusedUser ? styles.inputFocused : styles.input}
-                onFocus={() => {
-                  setFocusedUser(true);
-                  setIsShowKeyboard(true);
-                }}
-                onBlur={() => {
-                  setFocusedUser(false);
-                }}
-              />
               <TextInput
                 value={email}
                 onChangeText={handleEmail}
@@ -115,6 +83,7 @@ export default function RegistrationScreen() {
                   value={password}
                   onChangeText={handlePassword}
                   placeholder="Пароль"
+                  placeholderTextColor={"#BDBDBD"}
                   secureTextEntry={showPassword}
                   style={focusedPassword ? styles.inputFocused : styles.input}
                   onFocus={() => {
@@ -137,20 +106,18 @@ export default function RegistrationScreen() {
                 )}
               </View>
               {!isShowKeyboard && (
-                <TouchableOpacity
-                  activeOpacity={0.8}
-                  style={styles.registrationButton}
-                >
-                  <Text style={styles.registrationText}>
-                    Зарегистрироваться
-                  </Text>
+                <TouchableOpacity activeOpacity={0.8} style={styles.LogBTN}>
+                  <Text style={styles.LogText}>Вход</Text>
                 </TouchableOpacity>
               )}
               <View style={styles.containerForInput}>
                 {!isShowKeyboard && (
-                  <Pressable style={styles.signInBtn}>
-                    <Text style={styles.signInText}>
-                      Уже есть аккаунт? Войти
+                  <Pressable
+                    style={styles.loginBtn}
+                    onPress={() => navigation.navigate("Register")}
+                  >
+                    <Text style={styles.loginText}>
+                      Нет акаунта? Зарегистрироваться
                     </Text>
                   </Pressable>
                 )}
@@ -169,7 +136,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     justifyContent: "flex-end",
   },
-  inputContainer: {
+  containerForInput: {
     alignItems: "center",
   },
   input: {
@@ -193,14 +160,14 @@ const styles = StyleSheet.create({
   bgimage: {
     flex: 1,
   },
-  registrationContainer: {
+  containerForRegistration: {
     flexDirection: "column",
     backgroundColor: "#FFFFFF",
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
     justifyContent: "flex-end",
   },
-  registrationButton: {
+  LogBTN: {
     backgroundColor: "#FF6C00",
     marginHorizontal: 16,
     paddingBottom: 16,
@@ -211,48 +178,34 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     marginTop: 45,
   },
-  registrationText: {
-    fontFamily: "Roboto_400Regular",
+  LogText: {
     fontSize: 16,
+    fontFamily: "Roboto_400Regular",
     color: "#FFFFFF",
   },
   text: {
-    fontFamily: "Roboto_500Medium",
     fontSize: 30,
     marginBottom: 33,
     marginTop: 30,
+    fontFamily: "Roboto_500Medium",
   },
-  signInBtn: {
+  loginBtn: {
     marginTop: 16,
     marginBottom: 40,
   },
-  signInText: {
+  loginText: {
+    fontFamily: "Roboto_400Regular",
     fontSize: 16,
     color: "#1B4371",
-    textAlign: "center",
-    fontFamily: "Roboto_400Regular",
   },
   passwordBtn: {
     position: "absolute",
     top: "30%",
     right: 35,
-    fontFamily: "Roboto_400Regular",
     fontSize: 16,
     lineHeight: 19,
+    fontFamily: "Roboto_400Regular",
     color: "#1B4371",
   },
   passwordInput: { position: "relative" },
-  avatarWrapper: {
-    display: "flex",
-    alignItems: "center",
-  },
-  avatar: {
-    position: "relative",
-    marginTop: -60,
-    width: 120,
-    height: 120,
-    backgroundColor: "#F6F6F6",
-    borderRadius: 16,
-  },
-  avatarBtn: { position: "absolute", bottom: 15, right: -12.5 },
 });
