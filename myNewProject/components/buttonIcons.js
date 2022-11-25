@@ -10,6 +10,7 @@ import {
   iconLogOut,
   userIcon,
   iconArrowLeft,
+  commentIcon,
 } from "./icons/icons";
 
 export default function IconButton({ type }) {
@@ -20,6 +21,7 @@ export default function IconButton({ type }) {
   const LogOutSvg = () => <SvgXml xml={iconLogOut} style={styles.icon} />;
   const ArrowLeftSvg = () => <SvgXml xml={iconArrowLeft} style={styles.icon} />;
   const ShapeSvg = () => <SvgXml xml={iconShape} style={styles.icon} />;
+  const Comment = () => <SvgXml xml={commentIcon} style={styles.icon} />;
 
   let svg;
   switch (type) {
@@ -43,6 +45,9 @@ export default function IconButton({ type }) {
       break;
     case "map":
       svg = <MapSvg />;
+      break;
+    case "comment":
+      svg = <Comment />;
       break;
     default:
       svg = "";
