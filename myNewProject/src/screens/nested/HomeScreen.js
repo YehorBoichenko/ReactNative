@@ -9,14 +9,22 @@ import {
   TouchableOpacity,
 } from "react-native";
 import IconButton from "../../components/buttonIcons";
+import db from "../../firebase/config";
 
 const HomeScreen = ({ navigation, route }) => {
   const [posts, setPosts] = useState([]);
 
+  const getAllPosts = async () => {
+    await db
+      .firestore()
+      .collection("posts")
+      .onSnapshot((data) =>
+        setPosts(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+      );
+  };
+
   useEffect(() => {
-    if (route.params) {
-      setPosts((prevState) => [...prevState, route.params]);
-    }
+    getAllPosts();
   }, [route.params]);
   console.log("posts", posts);
   return (

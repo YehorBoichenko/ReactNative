@@ -12,8 +12,10 @@ import {
 import { Camera } from "expo-camera";
 import * as Location from "expo-location";
 import IconButton from "../../components/buttonIcons";
+import db from "../../firebase/config";
+import { useSelector } from "react-redux";
+
 const CreatePostsScreen = ({ navigation }) => {
-  const [inputIsFocus, setInputIsFocus] = useState("");
   const [camera, setCamera] = useState(null);
   const [photo, setPhoto] = useState(null);
   const [name, setName] = useState("");
@@ -21,6 +23,7 @@ const CreatePostsScreen = ({ navigation }) => {
   const [locationName, setLocationName] = useState("");
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [borderInput, setBorderInput] = useState(null);
+  const { userId, nickName } = useSelector((state) => state.auth);
 
   const keyboardHide = () => {
     setIsShowKeyboard(false);
@@ -51,8 +54,38 @@ const CreatePostsScreen = ({ navigation }) => {
 
   const sendPhoto = () => {
     navigation.navigate("Home", { photo, name, location, locationName });
+    uploadPost();
+    navigation.navigate("Home");
     setName("");
     setLocationName("");
+  };
+
+  const uploadPost = async () => {
+    const photo = await uploadPhoto();
+
+    const createPost = await db
+      .firestore()
+      .collection("user-posts")
+      .add({ photo, location, userId, nickName, locationName });
+    console.log("createPost", createPost);
+  };
+
+  const uploadPhoto = async () => {
+    try {
+      const response = await fetch(photo);
+      const file = await response.blob();
+      const postId = Date.now().toString();
+      await db.storage().ref(`postImage/${postId}`).put(file);
+      const processedPhoto = await db
+        .storage()
+        .ref("postImage")
+        .child(postId)
+        .getDownloadURL();
+      return processedPhoto;
+    } catch (error) {
+      console.log("error.message", error.message);
+      console.log("error.code", error.code);
+    }
   };
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
