@@ -4,11 +4,11 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 const AuthStack = createStackNavigator();
 const MainTab = createBottomTabNavigator();
 
-import LoginScreen from "./screens/auth/LoginScreen";
-import RegistrationScreen from "./screens/auth/RegistrationScreen";
-import PostsScreen from "./screens/main/PostScreen";
-import CreatePostsScreen from "./screens/main/CreatePostsScreen";
-import ProfileScreen from "./screens/main/ProfileScreen";
+import LoginScreen from "./src/screens/auth/LoginScreen";
+import RegistrationScreen from "./src/screens/auth/RegistrationScreen";
+import PostsScreen from "./src/screens/main/PostScreen";
+import CreatePostsScreen from "./src/screens/main/CreatePostsScreen";
+import ProfileScreen from "./src/screens/main/ProfileScreen";
 
 import { Ionicons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";

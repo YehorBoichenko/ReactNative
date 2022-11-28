@@ -3,22 +3,26 @@ import {
   Roboto_400Regular,
   Roboto_500Medium,
 } from "@expo-google-fonts/roboto";
-import { NavigationContainer } from "@react-navigation/native";
-import { useRoute } from "./router";
+import { Provider } from "react-redux";
+import { store } from "./src/redux/store";
+import Main from "./src/components/Main";
 // import AppLoading from "expo-app-loading";
-import LoginScreen from "./screens/auth/LoginScreen";
-import RegistrationScreen from "./screens/auth/RegistrationScreen";
+// import LoginScreen from "./screens/auth/LoginScreen";
+// import RegistrationScreen from "./screens/auth/RegistrationScreen";
 
 export default function App() {
   let [fontsLoaded] = useFonts({
     Roboto_400Regular,
     Roboto_500Medium,
   });
-  const routing = useRoute(true);
 
   if (!fontsLoaded) {
     return null;
   }
 
-  return <NavigationContainer>{routing}</NavigationContainer>;
+  return (
+    <Provider store={store}>
+      <Main />
+    </Provider>
+  );
 }

@@ -1,48 +1,53 @@
 import React, { useState } from "react";
 import {
-  StyleSheet,
-  Text,
-  View,
   ImageBackground,
-  TextInput,
-  TouchableOpacity,
+  StyleSheet,
   Keyboard,
+  TextInput,
   TouchableWithoutFeedback,
+  View,
+  Image,
+  Text,
   Pressable,
+  TouchableOpacity,
 } from "react-native";
-
-// const initialState = {
-//   email: "",
-//   password: "",
-// };
+import { useDispatch } from "react-redux";
+import { authSignUpUser } from "../../redux/auth/authOperations";
 
 const bgImage = require("../../assets/Photo-BG.jpg");
+// const avatarPic = require("../assets/Rectangle 22.png");
+const add = require("../../assets/add.png");
 
-export default function LoginScreen({ navigation }) {
-  const [isShowKeyboard, setIsShowKeyboard] = useState(false);
-  const [password, setPassword] = useState("");
-  const [email, setEmail] = useState("");
+const initialState = {
+  name: "",
+  email: "",
+  password: "",
+};
+export default function RegistrationScreen({ navigation }) {
+  const [state, setstate] = useState(initialState);
+  const [focusedUser, setFocusedUser] = useState(false);
   const [focusedPassword, setFocusedPassword] = useState(false);
   const [focusedEmail, setFocusedEmail] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [isShowKeyboard, setIsShowKeyboard] = useState(false);
+  const dispatch = useDispatch();
 
-  const handlePassword = (text) => setPassword(text);
-  const handleEmail = (text) => setEmail(text);
   const keyboardHide = () => {
     setIsShowKeyboard(false);
     Keyboard.dismiss();
   };
 
   const submitKeyboard = () => {
-    setPassword("");
-    setEmail("");
+    dispatch(authSignUpUser(state));
+    setstate(initialState);
     keyboardHide();
     setShowPassword(false);
-    navigation.navigate("Posts", {
-      screen: "PostsScreen",
-      params: state,
-    });
   };
+  const handleSubmit = () => {
+    dispatch(authSignUpUser(state));
+    setShowPassword(false);
+  };
+
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <ImageBackground
@@ -54,18 +59,40 @@ export default function LoginScreen({ navigation }) {
           <TouchableWithoutFeedback onPress={keyboardHide}>
             <View
               style={{
-                ...styles.containerForRegistration,
-                flex: isShowKeyboard ? 0.5 : 0.56,
+                ...styles.registrationContainer,
+                flex: isShowKeyboard ? 0.8 : 0.73,
                 marginBottom: isShowKeyboard ? 250 : 0,
               }}
               onSubmitEditing={submitKeyboard}
             >
-              <View style={styles.containerForInput}>
-                <Text style={styles.text}>Войти</Text>
+              <View style={styles.avatarWrapper}>
+                <View style={styles.avatar}>
+                  <Image style={styles.avatarBtn} source={add} />
+                </View>
+              </View>
+              <View style={styles.inputContainer}>
+                <Text style={styles.text}>Регистрация</Text>
               </View>
               <TextInput
-                value={email}
-                onChangeText={handleEmail}
+                value={state.name}
+                onChangeText={(value) =>
+                  setstate((prevState) => ({ ...prevState, name: value }))
+                }
+                placeholder="Логин"
+                style={focusedUser ? styles.inputFocused : styles.input}
+                onFocus={() => {
+                  setFocusedUser(true);
+                  setIsShowKeyboard(true);
+                }}
+                onBlur={() => {
+                  setFocusedUser(false);
+                }}
+              />
+              <TextInput
+                value={state.email}
+                onChangeText={(value) =>
+                  setstate((prevState) => ({ ...prevState, email: value }))
+                }
                 placeholder="Адрес электронной почты"
                 placeholderTextColor={"#BDBDBD"}
                 keyboardType={"email-address"}
@@ -80,10 +107,11 @@ export default function LoginScreen({ navigation }) {
               />
               <View style={styles.passwordInput}>
                 <TextInput
-                  value={password}
-                  onChangeText={handlePassword}
+                  value={state.password}
+                  onChangeText={(value) =>
+                    setstate((prevState) => ({ ...prevState, password: value }))
+                  }
                   placeholder="Пароль"
-                  placeholderTextColor={"#BDBDBD"}
                   secureTextEntry={showPassword}
                   style={focusedPassword ? styles.inputFocused : styles.input}
                   onFocus={() => {
@@ -94,7 +122,7 @@ export default function LoginScreen({ navigation }) {
                     setFocusedPassword(false);
                   }}
                 />
-                {password && (
+                {state.password && (
                   <Text
                     style={styles.passwordBtn}
                     onPress={() => {
@@ -106,18 +134,24 @@ export default function LoginScreen({ navigation }) {
                 )}
               </View>
               {!isShowKeyboard && (
-                <TouchableOpacity activeOpacity={0.8} style={styles.LogBTN}>
-                  <Text style={styles.LogText}>Вход</Text>
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  style={styles.registrationButton}
+                  onPress={handleSubmit}
+                >
+                  <Text style={styles.registrationText}>
+                    Зарегистрироваться
+                  </Text>
                 </TouchableOpacity>
               )}
               <View style={styles.containerForInput}>
                 {!isShowKeyboard && (
                   <Pressable
-                    style={styles.loginBtn}
-                    onPress={() => navigation.navigate("Register")}
+                    style={styles.signInBtn}
+                    onPress={() => navigation.navigate("Login")}
                   >
-                    <Text style={styles.loginText}>
-                      Нет акаунта? Зарегистрироваться
+                    <Text style={styles.signInText}>
+                      Уже есть аккаунт? Войти
                     </Text>
                   </Pressable>
                 )}
@@ -136,7 +170,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     justifyContent: "flex-end",
   },
-  containerForInput: {
+  inputContainer: {
     alignItems: "center",
   },
   input: {
@@ -160,14 +194,14 @@ const styles = StyleSheet.create({
   bgimage: {
     flex: 1,
   },
-  containerForRegistration: {
+  registrationContainer: {
     flexDirection: "column",
     backgroundColor: "#FFFFFF",
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
     justifyContent: "flex-end",
   },
-  LogBTN: {
+  registrationButton: {
     backgroundColor: "#FF6C00",
     marginHorizontal: 16,
     paddingBottom: 16,
@@ -178,34 +212,48 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     marginTop: 45,
   },
-  LogText: {
-    fontSize: 16,
+  registrationText: {
     fontFamily: "Roboto_400Regular",
+    fontSize: 16,
     color: "#FFFFFF",
   },
   text: {
+    fontFamily: "Roboto_500Medium",
     fontSize: 30,
     marginBottom: 33,
     marginTop: 30,
-    fontFamily: "Roboto_500Medium",
   },
-  loginBtn: {
+  signInBtn: {
     marginTop: 16,
     marginBottom: 40,
   },
-  loginText: {
-    fontFamily: "Roboto_400Regular",
+  signInText: {
     fontSize: 16,
     color: "#1B4371",
+    textAlign: "center",
+    fontFamily: "Roboto_400Regular",
   },
   passwordBtn: {
     position: "absolute",
     top: "30%",
     right: 35,
+    fontFamily: "Roboto_400Regular",
     fontSize: 16,
     lineHeight: 19,
-    fontFamily: "Roboto_400Regular",
     color: "#1B4371",
   },
   passwordInput: { position: "relative" },
+  avatarWrapper: {
+    display: "flex",
+    alignItems: "center",
+  },
+  avatar: {
+    position: "relative",
+    marginTop: -60,
+    width: 120,
+    height: 120,
+    backgroundColor: "#F6F6F6",
+    borderRadius: 16,
+  },
+  avatarBtn: { position: "absolute", bottom: 15, right: -12.5 },
 });
