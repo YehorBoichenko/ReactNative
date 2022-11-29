@@ -42,7 +42,7 @@
     "react-redux": "^8.0.5"
   },
   "devDependencies": {
-    "@babel/core": "^7.19.3"
+    "@babel/core": "^7.12.9"
   },
   "private": true
 }

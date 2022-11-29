@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -12,7 +12,8 @@ import {
   Keyboard,
   LogBox,
 } from "react-native";
-
+import { useSelector } from "react-redux";
+import db from "../../firebase/config";
 const CommentsScreen = ({ route }) => {
   const { postId, photo } = route.params;
   console.log("photo", photo);
