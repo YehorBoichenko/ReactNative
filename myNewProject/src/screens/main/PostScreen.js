@@ -9,12 +9,13 @@ import { authSignOutUser } from "../../redux/auth/authOperations";
 import { useDispatch } from "react-redux";
 
 const NestedScreen = createStackNavigator();
-const PostsScreen = ({ navigation }) => {
+const postsScreen = ({ navigation }) => {
   const dispatch = useDispatch();
 
   const handleSignOut = () => {
     dispatch(authSignOutUser());
   };
+
   return (
     <NestedScreen.Navigator>
       <NestedScreen.Screen
@@ -85,4 +86,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PostsScreen;
+export default postsScreen;

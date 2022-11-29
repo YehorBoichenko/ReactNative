@@ -8,6 +8,7 @@ export const authSignUpUser =
   async (dispatch, getState) => {
     try {
       await db.auth().createUserWithEmailAndPassword(email, password);
+
       const user = await db.auth().currentUser;
 
       await user.updateProfile({
@@ -18,9 +19,9 @@ export const authSignUpUser =
       const { displayName, uid, photoURL } = await db.auth().currentUser;
 
       const userUpdateProfile = {
-        nickName: displayName,
-        userId: uid,
-        avatarURL: photoURL,
+        nickName: user.displayName,
+        userId: user.uid,
+        avatarURL: user.photoURL,
       };
 
       dispatch(updateUserProfile(userUpdateProfile));

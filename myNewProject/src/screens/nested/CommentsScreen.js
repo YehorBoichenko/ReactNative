@@ -3,7 +3,6 @@ import {
   View,
   Text,
   StyleSheet,
-  SafeAreaView,
   FlatList,
   TextInput,
   TouchableOpacity,
@@ -14,27 +13,29 @@ import {
 } from "react-native";
 import { useSelector } from "react-redux";
 import db from "../../firebase/config";
+
 const CommentsScreen = ({ route }) => {
   const { postId, photo } = route.params;
   console.log("photo", photo);
   console.log("postId", postId);
   const [comment, setComment] = useState("");
-  const [allComments, setComments] = useState([]);
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
-
+  const [allComments, setAllComments] = useState([]);
   const { avatarURL } = useSelector((state) => state.auth);
   const { userId } = useSelector((state) => state.auth);
 
   useEffect(() => {
     LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
-    getComments();
+    getAllComments();
   }, []);
+
   const keyboardHide = () => {
     setIsShowKeyboard(false);
     Keyboard.dismiss();
   };
 
   const date = new Date().toLocaleString();
+
   const createComment = async () => {
     keyboardHide();
     db.firestore()
@@ -42,12 +43,13 @@ const CommentsScreen = ({ route }) => {
       .add({ comment, avatarURL, date, postId, userId });
     setComment("");
   };
-  const getComments = async () => {
+
+  const getAllComments = async () => {
     db.firestore()
       .collection("comments")
       .where("postId", "==", postId)
       .onSnapshot((data) =>
-        setComments(
+        setAllComments(
           data.docs
             .map((doc) => ({ ...doc.data(), id: doc.id }))
             .sort((a, b) => (a.date > b.date ? 1 : -1))
@@ -81,7 +83,7 @@ const CommentsScreen = ({ route }) => {
               ...styles.input,
               borderColor: isShowKeyboard ? "#FF6C00" : "#E8E8E8",
             }}
-            placeholder="Коментувати"
+            placeholder="Коментировать"
             onChangeText={setComment}
           />
           <TouchableOpacity
@@ -100,7 +102,6 @@ const CommentsScreen = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // alignItems: "center",
     justifyContent: "center",
     marginHorizontal: 10,
   },

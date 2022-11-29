@@ -23,12 +23,12 @@ import { nanoid } from "@reduxjs/toolkit";
 const bgImage = require("../../assets/Photo-BG.jpg");
 
 const initialState = {
-  name: "",
+  login: "",
   email: "",
   password: "",
 };
 export default function RegistrationScreen({ navigation }) {
-  const [state, setstate] = useState(initialState);
+  const [state, setState] = useState(initialState);
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [focusedUser, setFocusedUser] = useState(false);
   const [focusedPassword, setFocusedPassword] = useState(false);
@@ -44,17 +44,17 @@ export default function RegistrationScreen({ navigation }) {
     Keyboard.dismiss();
   };
 
-  const handleSubmit = async () => {
-    const avatarImg = await uploadAvatar();
-    dispatch(authSignUpUser(state, avatarImg));
-    setstate(initialState);
-    setShowPassword(false);
-  };
   const submitKeyboard = async () => {
     const avatarImg = await uploadAvatar();
     dispatch(authSignUpUser(state, avatarImg));
-    setstate(initialState);
-    keyboardHide();
+    setState(initialState);
+    KeyboardHide();
+    setShowPassword(false);
+  };
+  const handleSubmit = async () => {
+    const avatarImg = await uploadAvatar();
+    dispatch(authSignUpUser(state, avatarImg));
+    setState(initialState);
     setShowPassword(false);
   };
 
@@ -63,7 +63,6 @@ export default function RegistrationScreen({ navigation }) {
       console.log("avatar", avatar);
       if (avatar) {
         const avatarURL = avatar;
-        console.log("avatarURL", avatarURL);
         const response = await fetch(avatarURL);
         const file = await response.blob();
         console.log("file", file);
@@ -149,7 +148,7 @@ export default function RegistrationScreen({ navigation }) {
               <TextInput
                 value={state.name}
                 onChangeText={(value) =>
-                  setstate((prevState) => ({ ...prevState, name: value }))
+                  setState((prevState) => ({ ...prevState, name: value }))
                 }
                 placeholder="Логин"
                 style={focusedUser ? styles.inputFocused : styles.input}
@@ -164,7 +163,7 @@ export default function RegistrationScreen({ navigation }) {
               <TextInput
                 value={state.email}
                 onChangeText={(value) =>
-                  setstate((prevState) => ({ ...prevState, email: value }))
+                  setState((prevState) => ({ ...prevState, email: value }))
                 }
                 placeholder="Адрес электронной почты"
                 placeholderTextColor={"#BDBDBD"}
@@ -182,7 +181,7 @@ export default function RegistrationScreen({ navigation }) {
                 <TextInput
                   value={state.password}
                   onChangeText={(value) =>
-                    setstate((prevState) => ({ ...prevState, password: value }))
+                    setState((prevState) => ({ ...prevState, password: value }))
                   }
                   placeholder="Пароль"
                   secureTextEntry={showPassword}

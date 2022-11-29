@@ -21,7 +21,7 @@ const initialState = {
 const bgImage = require("../../assets/Photo-BG.jpg");
 export default function LoginScreen({ navigation }) {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
-  const [state, setstate] = useState(initialState);
+  const [state, setState] = useState(initialState);
   // const [password, setPassword] = useState("");
   // const [email, setEmail] = useState("");
   const [focusedPassword, setFocusedPassword] = useState(false);
@@ -37,7 +37,7 @@ export default function LoginScreen({ navigation }) {
 
   const submitKeyboard = () => {
     dispatch(authSignInUser(state));
-    setstate(initialState);
+    setState(initialState);
     keyboardHide();
     setShowPassword(false);
   };
@@ -68,7 +68,7 @@ export default function LoginScreen({ navigation }) {
               <TextInput
                 value={state.email}
                 onChangeText={(value) =>
-                  setstate((prevState) => ({ ...prevState, email: value }))
+                  setState((prevState) => ({ ...prevState, email: value }))
                 }
                 placeholder="Адрес электронной почты"
                 placeholderTextColor={"#BDBDBD"}
@@ -86,7 +86,7 @@ export default function LoginScreen({ navigation }) {
                 <TextInput
                   value={state.password}
                   onChangeText={(value) =>
-                    setstate((prevState) => ({ ...prevState, password: value }))
+                    setState((prevState) => ({ ...prevState, password: value }))
                   }
                   placeholder="Пароль"
                   placeholderTextColor={"#BDBDBD"}

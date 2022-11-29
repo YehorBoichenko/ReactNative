@@ -9,11 +9,11 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
 } from "react-native";
+import db from "../../firebase/config";
+import { useSelector } from "react-redux";
 import { Camera } from "expo-camera";
 import * as Location from "expo-location";
 import IconButton from "../../components/buttonIcons";
-import db from "../../firebase/config";
-import { useSelector } from "react-redux";
 
 const CreatePostsScreen = ({ navigation }) => {
   const [camera, setCamera] = useState(null);
@@ -23,10 +23,9 @@ const CreatePostsScreen = ({ navigation }) => {
   const [locationName, setLocationName] = useState("");
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [borderInput, setBorderInput] = useState(null);
+  const { userId, nickName } = useSelector((state) => state.auth);
   const [cameraPermission, requestCameraPermission] =
     Camera.useCameraPermissions();
-
-  const { userId, nickName } = useSelector((state) => state.auth);
 
   const keyboardHide = () => {
     setIsShowKeyboard(false);
@@ -36,11 +35,10 @@ const CreatePostsScreen = ({ navigation }) => {
 
   useEffect(() => {
     (async () => {
-      await cameraPermission.granted;
+      cameraPermission.granted;
       if (!cameraPermission.granted) {
         await requestCameraPermission();
       }
-
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         console.log("Permission to access location was denied");
@@ -61,13 +59,14 @@ const CreatePostsScreen = ({ navigation }) => {
   };
 
   const sendPhoto = () => {
-    uploadPost();
+    uploadPostToServer();
     navigation.navigate("Home");
     setName("");
     setLocationName("");
   };
-  const uploadPost = async () => {
-    const photo = await uploadPhoto();
+
+  const uploadPostToServer = async () => {
+    const photo = await uploadPhotoToServer();
 
     const createPost = await db.firestore().collection("user-posts").add({
       photo,
@@ -77,10 +76,9 @@ const CreatePostsScreen = ({ navigation }) => {
       locationName,
       name,
     });
-    console.log("createPost", createPost);
   };
 
-  const uploadPhoto = async () => {
+  const uploadPhotoToServer = async () => {
     try {
       const response = await fetch(photo);
       const file = await response.blob();

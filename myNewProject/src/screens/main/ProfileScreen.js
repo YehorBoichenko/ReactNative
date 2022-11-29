@@ -7,6 +7,7 @@ import {
   Image,
   ImageBackground,
   SafeAreaView,
+  StatusBar,
   ScrollView,
   TouchableOpacity,
   LogBox,
@@ -17,14 +18,12 @@ import { authSignOutUser } from "../../redux/auth/authOperations";
 import db from "../../firebase/config";
 
 import * as ImagePicker from "expo-image-picker";
-const add = require("../../assets/add.png");
 
-export default function ProfileScreen({ navigation, route }) {
+export default function profileScreen({ navigation, route }) {
   const dispatch = useDispatch();
 
   const [userPosts, setUserPosts] = useState([]);
   const [allComments, setAllComments] = useState([]);
-  console.log("userPosts", userPosts);
   const { userId } = useSelector((state) => state.auth);
   const { avatarURL } = useSelector((state) => state.auth);
 
@@ -37,7 +36,7 @@ export default function ProfileScreen({ navigation, route }) {
   const getUserPosts = async () => {
     await db
       .firestore()
-      .collection("posts")
+      .collection("user-posts")
       .where("userId", "==", userId)
       .onSnapshot((data) =>
         setUserPosts(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
@@ -58,6 +57,7 @@ export default function ProfileScreen({ navigation, route }) {
 
   const signOut = () => {
     dispatch(authSignOutUser());
+    console.log(authSignOutUser());
   };
 
   const addAvatar = async () => {
@@ -86,16 +86,12 @@ export default function ProfileScreen({ navigation, route }) {
                 <View style={styles.avatar}>
                   <View style={styles.avatar}>
                     <Image source={{ uri: avatarURL }} style={styles.header} />
-                    <TouchableOpacity
-                      onPress={addAvatar}
-                      style={styles.headerImg}
-                    >
-                      <Image style={styles.avatarBtn} source={add} />
-                    </TouchableOpacity>
                   </View>
                 </View>
                 <TouchableOpacity onPress={signOut} style={styles.logOutIcon}>
-                  <Text style={{ fontSize: 25 }}>&#8592;</Text>
+                  <Text style={{ fontSize: 25 }} onPress={signOut}>
+                    &#8592;
+                  </Text>
                 </TouchableOpacity>
               </View>
               <View style={styles.innerBoxTextWrap}>
@@ -150,6 +146,7 @@ export default function ProfileScreen({ navigation, route }) {
                 )}
               />
             </View>
+            {/* </View> */}
           </ScrollView>
         </SafeAreaView>
       </ImageBackground>
@@ -160,7 +157,8 @@ export default function ProfileScreen({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // paddingTop: StatusBar.currentHeight,
+    // justifyContent: "center",
+    // alignItems: "center",
   },
   headerContainer: {
     // marginBottom: -110,
@@ -195,15 +193,7 @@ const styles = StyleSheet.create({
     color: "#212121",
     textAlign: "center",
   },
-  innerBoxTextWrap: {
-    // flex: 1,
-    // fontFamily: "Roboto_500Medium",
-    // fontSize: 30,
-    // lineHeight: 35,
-    // letterSpacing: 0.02,
-    // color: "#212121",
-    // marginBottom: 32,
-  },
+
   postContainer: {
     marginBottom: 10,
     justifyContent: "center",
@@ -216,8 +206,6 @@ const styles = StyleSheet.create({
   },
   header: {
     position: "absolute",
-
-    // backgroundColor: "#F6F6F6",
     borderRadius: 16,
     width: 120,
     height: 120,
@@ -261,6 +249,7 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     justifyContent: "flex-start",
     marginTop: 5,
+    color: "#000000",
   },
   avatarWrapper: {
     display: "flex",
@@ -274,5 +263,4 @@ const styles = StyleSheet.create({
     backgroundColor: "#F6F6F6",
     borderRadius: 16,
   },
-  // avatarBtn: { position: "absolute", bottom: 15, right: -12.5 },
 });

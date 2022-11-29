@@ -13,8 +13,11 @@ import db from "../../firebase/config";
 
 const HomeScreen = ({ navigation, route }) => {
   const [posts, setPosts] = useState([]);
+  console.log("posts", posts);
+  const [allComments, setAllComments] = useState([]);
+  console.log("allComments", allComments);
 
-  const getAllPosts = async () => {
+  const getAllPost = async () => {
     await db
       .firestore()
       .collection("user-posts")
@@ -23,10 +26,23 @@ const HomeScreen = ({ navigation, route }) => {
       );
   };
 
+  const getAllComments = async () => {
+    await db
+      .firestore()
+      .collection("comments")
+      .onSnapshot((data) =>
+        setAllComments(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+      );
+  };
+
   useEffect(() => {
-    getAllPosts();
-  }, [route.params]);
-  console.log("user-posts", posts);
+    getAllPost();
+    getAllComments();
+  }, []);
+
+  const findId = (id) =>
+    allComments.filter(({ postId }) => id === postId).length;
+
   return (
     <View style={styles.container}>
       <FlatList
@@ -40,7 +56,7 @@ const HomeScreen = ({ navigation, route }) => {
               <View style={{ flexDirection: "row" }}>
                 <IconButton type="comment" />
                 <TouchableOpacity
-                  style={styles.comentsButton}
+                  style={styles.btnComents}
                   onPress={() =>
                     navigation.navigate("Comments", {
                       postId: item.id,
@@ -48,7 +64,7 @@ const HomeScreen = ({ navigation, route }) => {
                     })
                   }
                 >
-                  <Text style={styles.text}>0</Text>
+                  <Text style={styles.text}>{findId(item.id)}</Text>
                 </TouchableOpacity>
               </View>
               <View style={{ flexDirection: "row" }}>
