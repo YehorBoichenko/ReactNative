@@ -23,6 +23,9 @@ const CreatePostsScreen = ({ navigation }) => {
   const [locationName, setLocationName] = useState("");
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [borderInput, setBorderInput] = useState(null);
+  const [cameraPermission, requestCameraPermission] =
+    Camera.useCameraPermissions();
+
   const { userId, nickName } = useSelector((state) => state.auth);
 
   const keyboardHide = () => {
@@ -33,6 +36,10 @@ const CreatePostsScreen = ({ navigation }) => {
 
   useEffect(() => {
     (async () => {
+      cameraPermission.granted;
+      if (!cameraPermission.granted) {
+        await requestCameraPermission();
+      }
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         console.log("Permission to access location was denied");
@@ -53,20 +60,22 @@ const CreatePostsScreen = ({ navigation }) => {
   };
 
   const sendPhoto = () => {
-    navigation.navigate("Home", { photo, name, location, locationName });
     uploadPost();
     navigation.navigate("Home");
     setName("");
     setLocationName("");
   };
-
   const uploadPost = async () => {
     const photo = await uploadPhoto();
 
-    const createPost = await db
-      .firestore()
-      .collection("user-posts")
-      .add({ photo, location, userId, nickName, locationName });
+    const createPost = await db.firestore().collection("user-posts").add({
+      photo,
+      location,
+      userId,
+      nickName,
+      locationName,
+      name,
+    });
     console.log("createPost", createPost);
   };
 
@@ -87,6 +96,7 @@ const CreatePostsScreen = ({ navigation }) => {
       console.log("error.code", error.code);
     }
   };
+
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <View

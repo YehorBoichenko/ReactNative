@@ -17,7 +17,7 @@ const HomeScreen = ({ navigation, route }) => {
   const getAllPosts = async () => {
     await db
       .firestore()
-      .collection("posts")
+      .collection("user-posts")
       .onSnapshot((data) =>
         setPosts(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
       );
@@ -26,7 +26,7 @@ const HomeScreen = ({ navigation, route }) => {
   useEffect(() => {
     getAllPosts();
   }, [route.params]);
-  console.log("posts", posts);
+  console.log("user-posts", posts);
   return (
     <View style={styles.container}>
       <FlatList
@@ -41,7 +41,12 @@ const HomeScreen = ({ navigation, route }) => {
                 <IconButton type="comment" />
                 <TouchableOpacity
                   style={styles.comentsButton}
-                  onPress={() => navigation.navigate("Comments")}
+                  onPress={() =>
+                    navigation.navigate("Comments", {
+                      postId: item.id,
+                      photo: item.photo,
+                    })
+                  }
                 >
                   <Text style={styles.text}>0</Text>
                 </TouchableOpacity>

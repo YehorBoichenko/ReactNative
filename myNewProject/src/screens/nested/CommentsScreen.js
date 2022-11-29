@@ -1,19 +1,153 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  SafeAreaView,
+  FlatList,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  TouchableWithoutFeedback,
+  Keyboard,
+  LogBox,
+} from "react-native";
 
-const CommentsScreen = () => {
+const CommentsScreen = ({ route }) => {
+  const { postId, photo } = route.params;
+  console.log("photo", photo);
+  console.log("postId", postId);
+  const [comment, setComment] = useState("");
+  const [allComments, setComments] = useState([]);
+  const [isShowKeyboard, setIsShowKeyboard] = useState(false);
+
+  const { avatarURL } = useSelector((state) => state.auth);
+  const { userId } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
+    getComments();
+  }, []);
+  const keyboardHide = () => {
+    setIsShowKeyboard(false);
+    Keyboard.dismiss();
+  };
+
+  const date = new Date().toLocaleString();
+  const createComment = async () => {
+    keyboardHide();
+    db.firestore()
+      .collection("comments")
+      .add({ comment, avatarURL, date, postId, userId });
+    setComment("");
+  };
+  const getComments = async () => {
+    db.firestore()
+      .collection("comments")
+      .where("postId", "==", postId)
+      .onSnapshot((data) =>
+        setComments(
+          data.docs
+            .map((doc) => ({ ...doc.data(), id: doc.id }))
+            .sort((a, b) => (a.date > b.date ? 1 : -1))
+        )
+      );
+  };
   return (
-    <View style={styles.container}>
-      <Text>Comments Screen</Text>
-    </View>
+    <TouchableWithoutFeedback onPress={keyboardHide}>
+      <View style={styles.container}>
+        <View style={styles.postContainer}>
+          <Image source={{ uri: photo }} style={styles.postImage} />
+        </View>
+        <FlatList
+          data={allComments}
+          renderItem={({ item }) => (
+            <View style={styles.comment}>
+              <Image source={{ uri: item.avatarURL }} style={styles.image} />
+              <Text>{item.comment}</Text>
+              <Text>{item.date}</Text>
+            </View>
+          )}
+          keyExtractor={(item) => item.id}
+        />
+        <View onSubmitEditing={createComment}>
+          <TextInput
+            value={comment}
+            onFocus={() => {
+              setIsShowKeyboard(true);
+            }}
+            style={{
+              ...styles.input,
+              borderColor: isShowKeyboard ? "#FF6C00" : "#E8E8E8",
+            }}
+            placeholder="Коментувати"
+            onChangeText={setComment}
+          />
+          <TouchableOpacity
+            style={styles.btn}
+            activeOpacity={0.7}
+            onPress={createComment}
+          >
+            <Text style={styles.btnTitle}>Опубликовать</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    // alignItems: "center",
+    justifyContent: "center",
+    marginHorizontal: 10,
+  },
+  comment: {
+    borderRadius: 8,
+    borderWidth: 1,
+    padding: 30,
+    marginTop: 10,
+  },
+  btn: {
+    marginTop: 40,
+    width: "100%",
+    padding: 16,
+    backgroundColor: "#FF6C00",
+    borderRadius: 100,
     justifyContent: "center",
     alignItems: "center",
+  },
+  btnTitle: {
+    fontFamily: "Roboto_400Regular",
+    fontSize: 16,
+    lineHeight: 19,
+    color: "#fff",
+  },
+  input: {
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: "#E8E8E8",
+    borderStyle: "solid",
+    borderRadius: 8,
+    marginTop: 16,
+    paddingLeft: 16,
+    height: 40,
+    width: "100%",
+  },
+  image: {
+    width: 50,
+    height: 50,
+    borderRadius: 8,
+  },
+  postContainer: {
+    marginBottom: 10,
+    marginHorizontal: 16,
+  },
+  postImage: {
+    width: "100%",
+    height: 240,
+    borderRadius: 8,
   },
 });
 

@@ -10,8 +10,8 @@ const MapScreen = ({ route }) => {
       <MapView
         style={styles.map}
         initialRegion={{
-          latitude: 48.002777,
-          longitude: 37.805279,
+          latitude,
+          longitude,
           latitudeDelta: 0.001,
           longitudeDelta: 0.006,
         }}
