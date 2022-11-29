@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { StyleSheet, TouchableOpacity, Text } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import HomeScreen from "../nested/HomeScreen";
 import CommentsScreen from "../nested/CommentsScreen";
@@ -12,8 +12,7 @@ const NestedScreen = createStackNavigator();
 const PostsScreen = ({ navigation }) => {
   const dispatch = useDispatch();
 
-  const handleSighOut = () => {
-    console.log("qweqwe");
+  const handleSignOut = () => {
     dispatch(authSignOutUser());
   };
   return (
@@ -23,8 +22,11 @@ const PostsScreen = ({ navigation }) => {
         component={HomeScreen}
         options={{
           headerRight: () => (
-            <TouchableOpacity style={{ padding: 15 }} onPress={handleSighOut}>
-              <IconButton type="log-out" />
+            <TouchableOpacity
+              style={{ marginRight: 15 }}
+              onPress={handleSignOut}
+            >
+              <Text style={{ fontSize: 25 }}>&#8592;</Text>
             </TouchableOpacity>
           ),
           title: "Публикации",

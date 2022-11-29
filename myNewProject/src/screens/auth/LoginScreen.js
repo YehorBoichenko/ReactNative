@@ -41,6 +41,10 @@ export default function LoginScreen({ navigation }) {
     keyboardHide();
     setShowPassword(false);
   };
+  const handleSubmit = () => {
+    dispatch(authSignInUser(state));
+    setShowPassword(false);
+  };
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <ImageBackground
@@ -111,7 +115,7 @@ export default function LoginScreen({ navigation }) {
                 <TouchableOpacity
                   activeOpacity={0.8}
                   style={styles.LogBTN}
-                  onPress={submitKeyboard}
+                  onPress={handleSubmit}
                 >
                   <Text style={styles.LogText}>Вход</Text>
                 </TouchableOpacity>
