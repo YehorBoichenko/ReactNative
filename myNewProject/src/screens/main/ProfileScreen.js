@@ -19,13 +19,14 @@ import db from "../../firebase/config";
 
 import * as ImagePicker from "expo-image-picker";
 
-export default function profileScreen({ navigation, route }) {
+export default function ProfileScreen({ navigation, route }) {
   const dispatch = useDispatch();
 
   const [userPosts, setUserPosts] = useState([]);
   const [allComments, setAllComments] = useState([]);
   const { userId } = useSelector((state) => state.auth);
   const { avatarURL } = useSelector((state) => state.auth);
+  const { nickName } = useSelector((state) => state.auth);
 
   useEffect(() => {
     LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
@@ -41,6 +42,7 @@ export default function profileScreen({ navigation, route }) {
       .onSnapshot((data) =>
         setUserPosts(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
       );
+    console.log(userPosts);
   };
 
   const getAllComments = async () => {
@@ -95,9 +97,7 @@ export default function profileScreen({ navigation, route }) {
                 </TouchableOpacity>
               </View>
               <View style={styles.innerBoxTextWrap}>
-                <Text style={styles.innerBoxText}>
-                  {userPosts[0]?.nickName}
-                </Text>
+                <Text style={styles.innerBoxText}>{nickName}</Text>
               </View>
             </View>
             <View style={styles.innerBox}>

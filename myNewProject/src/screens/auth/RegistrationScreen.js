@@ -23,7 +23,7 @@ import { nanoid } from "@reduxjs/toolkit";
 const bgImage = require("../../assets/Photo-BG.jpg");
 
 const initialState = {
-  login: "",
+  name: "",
   email: "",
   password: "",
 };
@@ -78,7 +78,7 @@ export default function RegistrationScreen({ navigation }) {
         const processedAvatar = await db
           .storage()
           .ref("avatarImage")
-          .child("businessman-character-avatar-isolated_24877-60111.webp")
+          .child("default.webp")
           .getDownloadURL();
         return processedAvatar;
       }

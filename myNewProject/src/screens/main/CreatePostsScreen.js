@@ -35,10 +35,11 @@ const CreatePostsScreen = ({ navigation }) => {
 
   useEffect(() => {
     (async () => {
-      cameraPermission.granted;
+      await cameraPermission.granted;
       if (!cameraPermission.granted) {
         await requestCameraPermission();
       }
+
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         console.log("Permission to access location was denied");
